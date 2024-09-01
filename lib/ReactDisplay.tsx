@@ -31,7 +31,12 @@ const ReactDisplay: FC<ReactDisplayProps> = ({
 
   return (
     <div className="w-[80vw] h-[80vh]">
-      <div className="bg-slate-50 py-2 h-10 text-black">{fileName}</div>
+      <div
+        className="bg-slate-50 h-10 text-black items-center 
+      align-middle flex justify-center shadow-lg"
+      >
+        {fileName}
+      </div>
       <div className="overflow-scroll h-[90%] bg-gray-600">
         <ViewerRenderer />
       </div>
