@@ -44,7 +44,7 @@ const ExcelDocViewer: React.FC<ExcelViewerProps> = ({ fileContent }) => {
     });
 
     // Add 10 more empty rows
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 20; i++) {
       sheetData.push(
         Array(sheetData[0].length).fill({ value: '', readOnly: true })
       );
@@ -61,19 +61,19 @@ const ExcelDocViewer: React.FC<ExcelViewerProps> = ({ fileContent }) => {
   };
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-[100%] h-[100%] px-10">
       {workbook && (
-        <div className="flex flex-col h-[500px] overflow-hidden">
-          <div className="flex-1 overflow-y-scroll overflow-x-auto">
+        <div className="flex flex-col overflow-hidden h-[100%] bg-white">
+          <div className="flex-1 overflow-y-scroll overflow-x-auto h-full">
             <Spreadsheet
               data={sheetData}
               rowLabels={rowNames}
-              className="w-auto"
+              className="w-auto h-full"
             />
           </div>
 
           {/* Sheet Tabs */}
-          <ul className="flex list-none p-0">
+          <ul className="flex list-none p-0 bg-white shadow-inner">
             {workbook.SheetNames.map((name) => (
               <li
                 key={name}
@@ -81,7 +81,7 @@ const ExcelDocViewer: React.FC<ExcelViewerProps> = ({ fileContent }) => {
                 className={`cursor-pointer px-2 py-1 border-[1px] border-gray-500 ${
                   name === activeSheetName
                     ? 'bg-green-600 text-white'
-                    : 'bg-white text-black'
+                    : 'bg-white text-black hover:bg-green-100'
                 }`}
               >
                 {name}

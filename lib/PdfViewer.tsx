@@ -13,16 +13,16 @@ GlobalWorkerOptions.workerSrc =
 
 const InfiniteScrollPDFViewer: FC<ViewerProps> = ({ fileContent }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isLoadingRef = useRef(false);
 
   const [pdfDocument, setPdfDocument] = useState<PDFDocumentProxy | null>(null);
   const [pages, setPages] = useState<number[]>([1]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     loadPDF();
   }, [fileContent]);
 
-  async function loadPDF() {
+  const loadPDF = async () => {
     try {
       const loadingTask = getDocument({
         data: await fileContent.arrayBuffer()
@@ -32,7 +32,7 @@ const InfiniteScrollPDFViewer: FC<ViewerProps> = ({ fileContent }) => {
     } catch (error) {
       console.error('Error loading PDF:', error);
     }
-  }
+  };
 
   const renderPage = useCallback(
     async (pageNumber: number) => {
@@ -56,7 +56,6 @@ const InfiniteScrollPDFViewer: FC<ViewerProps> = ({ fileContent }) => {
         await renderTask.promise;
 
         containerRef.current.appendChild(canvas);
-        console.log(`Page ${pageNumber} rendered successfully.`);
       } catch (error) {
         console.error(`Error rendering page ${pageNumber}:`, error);
       }
@@ -64,37 +63,37 @@ const InfiniteScrollPDFViewer: FC<ViewerProps> = ({ fileContent }) => {
     [pdfDocument]
   );
 
-  const loadMorePages = useCallback(() => {
-    if (!pdfDocument || isLoading) return;
+  const loadMorePages = useCallback(async () => {
+    if (!pdfDocument || isLoadingRef.current) return;
 
-    setIsLoading(true);
-    setPages((prevPages) => {
-      const nextPage = prevPages.length + 1;
-      if (nextPage <= pdfDocument.numPages) {
-        renderPage(nextPage);
-        return [...prevPages, nextPage];
-      }
-      return prevPages;
-    });
-    setIsLoading(false);
-  }, [pdfDocument, isLoading, renderPage]);
+    isLoadingRef.current = true;
+    const nextPage = pages.length + 1;
+
+    if (nextPage <= pdfDocument.numPages) {
+      await renderPage(nextPage);
+      setPages((prevPages) => [...prevPages, nextPage]);
+    }
+
+    isLoadingRef.current = false;
+  }, [pdfDocument, pages, renderPage]);
+
+  const onScroll = useCallback(() => {
+    if (!containerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+
+    if (scrollTop + clientHeight >= scrollHeight - 100) {
+      loadMorePages();
+    }
+  }, [loadMorePages]);
 
   useEffect(() => {
-    const onScroll = () => {
-      if (!containerRef.current) return;
-      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-      if (scrollTop + clientHeight >= scrollHeight - 100) {
-        loadMorePages();
-      }
-    };
-
     const container = containerRef.current;
     container?.addEventListener('scroll', onScroll);
 
     return () => {
       container?.removeEventListener('scroll', onScroll);
     };
-  }, [loadMorePages]);
+  }, [onScroll]);
 
   useEffect(() => {
     if (pages.length === 1 && pdfDocument) {
@@ -103,8 +102,8 @@ const InfiniteScrollPDFViewer: FC<ViewerProps> = ({ fileContent }) => {
   }, [pdfDocument, pages, renderPage]);
 
   return (
-    <div className="px-12 py-5">
-      <div ref={containerRef}>
+    <div className="flex justify-center bg-stone-600 h-[100%] w-[100%]">
+      <div ref={containerRef} className="overflow-y-scroll">
         {/* Pages will be rendered into this container */}
       </div>
     </div>
