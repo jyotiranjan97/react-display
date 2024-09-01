@@ -103,8 +103,10 @@ const InfiniteScrollPDFViewer: FC<ViewerProps> = ({ fileContent }) => {
   }, [pdfDocument, pages, renderPage]);
 
   return (
-    <div ref={containerRef} className="overflow-y-scroll">
-      {/* Pages will be rendered into this container */}
+    <div className="px-12 py-5">
+      <div ref={containerRef}>
+        {/* Pages will be rendered into this container */}
+      </div>
     </div>
   );
 };
