@@ -17,9 +17,13 @@ function App() {
   return (
     <div>
       <h1>Upload and Preview Word Document</h1>
-      <input type="file" accept=".docx, .pdf" onChange={handleFileChange} />
+      <input
+        type="file"
+        accept=".docx, .pdf, .xlsx"
+        onChange={handleFileChange}
+      />
       {docBlob && (
-        <ReactDisplay fileName="DOcx" fileType="pdf" fileContent={docBlob} />
+        <ReactDisplay fileName="DOcx" fileType="xlsx" fileContent={docBlob} />
       )}
     </div>
   );

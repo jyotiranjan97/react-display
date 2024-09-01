@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import ExcelDocViewer from './ExcelDocViewer';
 import PdfDocViewer from './PdfViewer';
 import { FileType } from './types';
 import WordDocViewer from './WordDocViewer';
@@ -22,7 +23,7 @@ const ReactDisplay: FC<ReactDisplayProps> = ({
       case 'doc':
         return <WordDocViewer fileContent={fileContent} />;
       case 'xlsx':
-        return <>Excel Viewer</>;
+        return <ExcelDocViewer fileContent={fileContent} />;
       default:
         return <div>File type not supported</div>;
     }
@@ -31,7 +32,7 @@ const ReactDisplay: FC<ReactDisplayProps> = ({
   return (
     <div>
       <div>{fileName}</div>
-      <div className="h-[80vh] w-[60vw] overflow-auto flex justify-center p-10">
+      <div className="h-[80vh] w-[60vw] overflow-scroll p-10">
         <ViewerRenderer />
       </div>
     </div>
